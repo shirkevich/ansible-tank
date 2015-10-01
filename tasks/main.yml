@@ -1,0 +1,14 @@
+---
+- name: ensure directory exists
+  file: path={{ tank_host_path | mandatory }} state=directory
+
+- name: copy load.ini
+  copy: src={{ tank_configs_path | mandatory }}/{{ tank_load_ini }} dest={{ tank_host_path }}
+
+- name: run tank container
+  docker:
+    name: "{{ tank_docker_name }}"
+    image: "zooniverse/yandex-tank:latest"
+    state: started
+    volumes:
+      - "{{ tank_host_path }}/{{ tank_load_ini }}:/load.ini"
